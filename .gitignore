@@ -23,3 +23,8 @@
 hs_err_pid*
 /.idea/
 /.mvn/
+/target/
+/mvnw.cmd
+/mvnw
+/k8s-devops-demo.iml
+/HELP.md
