@@ -1,0 +1,10 @@
+FROM openjdk:8-jdk-alpine
+
+LABEL Wenjiahu <848063664@qq.com>
+
+WORKDIR /home
+
+COPY demo-0.0.1.jar /home/demo-0.0.1.jar
+
+ENTRYPOINT ["java","-jar","-Dspring.profiles.active=dev","/home/demo-0.0.1.jar"]
+
