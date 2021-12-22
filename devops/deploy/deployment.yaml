@@ -43,7 +43,12 @@ spec:
           volumeMounts:
             - name: demo-config
               mountPath: /home/config
+            - name: demo-log
+              mountPath: /home/logs
       volumes:
         - name: demo-config
           configMap:
             name: demo-config
+        - name: demo-log
+          persistentVolumeClaim:
+            claimName: demo-log-pvc
