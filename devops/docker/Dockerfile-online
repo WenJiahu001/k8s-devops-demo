@@ -6,5 +6,5 @@ WORKDIR /home
 
 COPY target/demo-0.0.1.jar /home/demo-0.0.1.jar
 
-ENTRYPOINT ["java","-jar","-Dspring.profiles.active=prod","/home/demo-0.0.1.jar"]
+ENTRYPOINT java $JAVA_OPTS $ACTIVE -jar *.jar $SPRING_CONFIG_LOCATION
 

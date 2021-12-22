@@ -18,6 +18,13 @@ spec:
       containers:
         - name: demo
           image: 15284478675/demo:0.0.1
+          env:
+            - name: JAVA_OPTS
+              value: "-XX:MaxRAMPercentage=90.0"
+            - name: SPRING_CONFIG_LOCATION
+              value: "--spring.config.location=/home/config/application-prod.yml"
+            - name: ACTIVE
+              value: "-Dspring.profiles.active=prod"
           imagePullPolicy: Always
           ports:
             - containerPort: 8081
@@ -33,3 +40,10 @@ spec:
             initialDelaySeconds: 120
             periodSeconds: 20
             timeoutSeconds: 20
+          volumeMounts:
+            - name: demo-config
+              mountPath: /home/config
+      volumes:
+        - name: demo-config
+          configMap:
+            name: demo-config
