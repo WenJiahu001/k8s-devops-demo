@@ -3,19 +3,15 @@ apiVersion: v1
 metadata:
   name: demo-log-pvc
   namespace: test
-  labels:
-    app: demo-log-pvc
   annotations:
-    kubesphere.io/alias-name: demo-log
-    pv.kubernetes.io/bind-completed: 'yes'
-    pv.kubernetes.io/bound-by-controller: 'yes'
-    volume.beta.kubernetes.io/storage-provisioner: cluster.local/nfs-server-provisioner
+    kubesphere.io/creator: admin
   finalizers:
     - kubernetes.io/pvc-protection
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
-  storageClassName: 
+  storageClassName: local
+  volumeMode: Filesystem
