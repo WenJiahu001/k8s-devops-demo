@@ -1,0 +1,57 @@
+pipeline {
+  agent {
+    node {
+      label 'maven'
+    }
+
+  }
+  stages {
+    stage('Checkout SCM') {
+      steps {
+        git(credentialsId: 'github-id', url: 'https://github.com/WenJiahu001/k8s-devops-demo.git', changelog: true, poll: false, branch: 'main')
+      }
+    }
+
+    stage('Bulid And Push') {
+      steps {
+        container('maven') {
+          sh 'mvn -Dmaven.test.skip=true clean package'
+          sh 'docker build -f devops/docker/Dockerfile-online -t 15284478675/demo:0.0.1 .'
+          withCredentials([usernamePassword(credentialsId : 'dockerhub-id' ,passwordVariable : 'DOCKER_PASSWORD' ,usernameVariable : 'DOCKER_USERNAME' ,)]) {
+            sh 'echo "$DOCKER_PASSWORD" | docker login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
+            sh 'docker push 15284478675/demo:0.0.1'
+          }
+
+        }
+
+      }
+    }
+
+    stage('Deploy to DEV') {
+      steps {
+        container('maven') {
+          sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'
+          sh 'install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl'
+          sh 'kubectl version --client'
+          withCredentials([kubeconfigContent(credentialsId : "kubeconfig-id" ,variable : 'KUBECONFIG')]) {
+            sh '''
+              set +x
+              mkdir ~/.kube
+              echo "$KUBECONFIG" > ~/.kube/config
+            '''
+          }
+          sh 'kubectl cluster-info'
+        }
+        container('maven') {
+              sh '''
+              find devops/deploy/ -type f |while read FILE; \
+              do envsubst < "$FILE" > "$FILE".tmp&&mv "$FILE".tmp "$FILE"; \
+              done;
+              '''
+              sh 'kubectl apply -f devops/deploy/'
+            }
+//             kubernetesDeploy(configs: 'deploy/dev-ol/**', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+          }
+      }
+      }
+    }
