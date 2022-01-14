@@ -29,4 +29,13 @@ public class TestController {
         return "hello,k8s";
     }
 
+    @GetMapping("test03")
+    public String test03() throws InterruptedException {
+        Thread.sleep(3000);
+
+        String s = "hello,k8s";
+        System.out.println(s);
+        return s;
+    }
+
 }

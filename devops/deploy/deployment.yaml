@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: demo
-          image: 15284478675/demo:0.0.1
+          image: $DOCKERHUB_NAMESPACE/$APP_NAME:$VERSION
           env:
             - name: JAVA_OPTS
               value: "-XX:MaxRAMPercentage=90.0"
